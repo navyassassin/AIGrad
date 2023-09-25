@@ -311,16 +311,25 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        self.startingGameState = startingGameState
 
     def getStartState(self):
         "Returns the start state (in your state space, not the full Pacman state space)"
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return (self.startingPosition, [])
+        #util.raiseNotDefined()
 
     def isGoalState(self, state):
         "Returns whether this search state is a goal state of the problem"
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        coord = state[0]
+        checkedCorners = state[1]
+        if coord in self.corners:
+            if not coord in checkedCorners:
+                checkedCorners.append(coord)
+            return len(checkedCorners) == 4
+        return False
+        # util.raiseNotDefined()
 
     def getSuccessors(self, state):
         """
@@ -335,6 +344,8 @@ class CornersProblem(search.SearchProblem):
         """
 
         successors = []
+        x,y = state[0]
+        checkedCorners = state[1]
         for action in [Directions.EAST, Directions.WEST, Directions.NORTH, Directions.SOUTH]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -344,6 +355,17 @@ class CornersProblem(search.SearchProblem):
             #   hitsWall = self.walls[nextx][nexty]
 
             "*** YOUR CODE HERE ***"
+            checkX, checkY = Actions.directionToVector(action)
+            newX, newY = int(x + checkX), int(y + checkY)
+            wall = self.walls[newX][newY]
+            if not wall:
+                successorCorner = list(checkedCorners)
+                nextNode = (newX, newY)
+                if nextNode in self.corners:
+                    if not nextNode in successorCorner:
+                        successorCorner.append(nextNode)
+                successor = ((nextNode, successorCorner), action, 1)
+                successors.append(successor)
 
         self._expanded += 1
         return successors

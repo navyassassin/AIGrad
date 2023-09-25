@@ -95,7 +95,6 @@ def depthFirstSearch(problem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     
-# made with pseudocode taken from https://www.programiz.com/dsa/graph-dfs
 
     stack = util.Stack()
     stack.push(problem.getStartState())
@@ -128,7 +127,8 @@ def breadthFirstSearch(problem):
     Search the shallowest nodes in the search tree first.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    #util.raiseNotDefined()
 
 
 def uniformCostSearch(problem):
