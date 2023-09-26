@@ -124,11 +124,11 @@ def breadthFirstSearch(problem):
     """
     "*** YOUR CODE HERE ***"
 
-    queue = util.Queue()                    # Fringe to manage which states to expand
+    queue = util.Queue()                    
     queue.push(problem.getStartState())
-    visited = set()                       # List to check whether a state has already been visited
-    final_path = []                           # List to store the final sequence of directions
-    line = util.Queue()           # Queue to store directions to children (currState and line go hand in hand)
+    visited = set()                       
+    final_path = []                           
+    line = util.Queue()           
     current_state = queue.pop()
     while not problem.isGoalState(current_state):
         if current_state not in visited:
