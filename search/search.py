@@ -99,17 +99,17 @@ def depthFirstSearch(problem):
     import util 
 
     stack = util.Stack()
-    stack.push((problem.getStartState(), []))  # Store the current state and path
+    stack.push((problem.getStartState(), []))  # Store the current state and final_path
     visited = set()
     while not stack.isEmpty():
-        current_state, path = stack.pop()
+        current_state, final_path = stack.pop()
         if current_state not in visited:
             visited.add(current_state)
             if problem.isGoalState(current_state):
-                return path  # Return the path when the goal state is reached
+                return final_path  # Return the final_path when the goal state is reached
             children = problem.getSuccessors(current_state)
             for child, direction, cost in children:
-                new_path = path + [direction]  # Extend the path
+                new_path = final_path + [direction]  # Extend the final_path
                 stack.push((child, new_path))
     return []
 
@@ -123,47 +123,28 @@ def breadthFirstSearch(problem):
     Search the shallowest nodes in the search tree first.
     """
     "*** YOUR CODE HERE ***"
-    visited = set()
-    queue = util.Queue()
-    final_path = util.Queue()
-    line = []
-    current_state = problem.getStartState()
-    queue.push(current_state)
-    while queue:
-        print("The current state is: " + str(current_state))
-        queue.pop(current_state)
+
+    queue = util.Queue()                    # Fringe to manage which states to expand
+    queue.push(problem.getStartState())
+    visited = set()                       # List to check whether a state has already been visited
+    final_path = []                           # List to store the final sequence of directions
+    line = util.Queue()           # Queue to store directions to children (currState and line go hand in hand)
+    current_state = queue.pop()
+    while not problem.isGoalState(current_state):
         if current_state not in visited:
             visited.add(current_state)
             neighbors = problem.getSuccessors(current_state)
-            for coord, direction, cost in neighbors:
-                visited.add(coord)
-                queue.push(coord)
-                temp_path = line + [direction]
-                final_path.push(temp_path)
-        line = final_path.pop()
-    return line
+            for child, direction, cost in neighbors:
+                queue.push(child)
+                temp_path = final_path + [direction]
+                line.push(temp_path)
+        current_state = queue.pop()
+        final_path = line.pop()
+    return final_path
 
-    
 
-"""
-    fringe = util.Queue()                    # Fringe to manage which states to expand
-    fringe.push(problem.getStartState())
-    visited = []                        # List to check whether a state has already been visited
-    path = []                           # List to store the final sequence of directions
-    path_to_current = util.Queue()           # Queue to store directions to children (currState and path_to_current go hand in hand)
-    curr_state = fringe.pop()
-    while not problem.isGoalState(curr_state):
-        if curr_state not in visited:
-            visited.append(curr_state)
-            successors = problem.getSuccessors(curr_state)
-            for child, direction, cost in successors:
-                fringe.push(child)
-                temp_path = path + [direction]
-                path_to_current.push(temp_path)
-        curr_state = fringe.pop()
-        path = path_to_current.pop()
-    return path
-"""
+
+
     #util.raiseNotDefined()
 
 
