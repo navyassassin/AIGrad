@@ -127,7 +127,24 @@ def breadthFirstSearch(problem):
     Search the shallowest nodes in the search tree first.
     """
     "*** YOUR CODE HERE ***"
-    
+    queue = util.Queue()
+    direction = util.Queue()
+    queue.push(problem.getStartState())
+    state = queue.pop()
+    visited = set()
+    temp_line = []
+    final_line = []
+    while problem.isGoalState(state) != True:
+        if state not in visited:
+            visited.append(state)
+            children = problem.getSuccessors(state)
+            for child, direction, cost in children:
+                queue.push(child)
+                temp_line = final_line + [direction]
+                direction.push(temp_line)
+            state = queue.pop()
+            final_line = direction.pop()
+    return final_line
     #util.raiseNotDefined()
 
 
