@@ -96,27 +96,23 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     
 
+    import util 
+
     stack = util.Stack()
-    stack.push(problem.getStartState())
-    visited = set() #using a set makes for faster checking
-    final_line = []
-    temp_line = util.Stack()
-    current_state = stack.pop()
-    while problem.isGoalState(current_state) != True: #while not at the goal state, iterate over this loop
-
-        if current_state not in visited: #if the current state hasn't been visited add it to this state, otherwise pop the stack to introduce new current state 
+    stack.push((problem.getStartState(), []))  # Store the current state and path
+    visited = set()
+    while not stack.isEmpty():
+        current_state, path = stack.pop()
+        if current_state not in visited:
             visited.add(current_state)
+            if problem.isGoalState(current_state):
+                return path  # Return the path when the goal state is reached
             children = problem.getSuccessors(current_state)
-            
             for child, direction, cost in children:
-                stack.push(child)
-                current_line = final_line  + [direction]
-                print(current_line)
-                temp_line.push(current_line)
+                new_path = path + [direction]  # Extend the path
+                stack.push((child, new_path))
+    return []
 
-        current_state = stack.pop()
-        final_line = temp_line.pop()
-    return final_line
     
 
     #util.raiseNotDefined()
@@ -127,24 +123,47 @@ def breadthFirstSearch(problem):
     Search the shallowest nodes in the search tree first.
     """
     "*** YOUR CODE HERE ***"
-    queue = util.Queue()
-    direction = util.Queue()
-    queue.push(problem.getStartState())
-    state = queue.pop()
     visited = set()
-    temp_line = []
-    final_line = []
-    while problem.isGoalState(state) != True:
-        if state not in visited:
-            visited.append(state)
-            children = problem.getSuccessors(state)
-            for child, direction, cost in children:
-                queue.push(child)
-                temp_line = final_line + [direction]
-                direction.push(temp_line)
-            state = queue.pop()
-            final_line = direction.pop()
-    return final_line
+    queue = util.Queue()
+    final_path = util.Queue()
+    line = []
+    current_state = problem.getStartState()
+    queue.push(current_state)
+    while queue:
+        print("The current state is: " + str(current_state))
+        queue.pop(current_state)
+        if current_state not in visited:
+            visited.add(current_state)
+            neighbors = problem.getSuccessors(current_state)
+            for coord, direction, cost in neighbors:
+                visited.add(coord)
+                queue.push(coord)
+                temp_path = line + [direction]
+                final_path.push(temp_path)
+        line = final_path.pop()
+    return line
+
+    
+
+"""
+    fringe = util.Queue()                    # Fringe to manage which states to expand
+    fringe.push(problem.getStartState())
+    visited = []                        # List to check whether a state has already been visited
+    path = []                           # List to store the final sequence of directions
+    path_to_current = util.Queue()           # Queue to store directions to children (currState and path_to_current go hand in hand)
+    curr_state = fringe.pop()
+    while not problem.isGoalState(curr_state):
+        if curr_state not in visited:
+            visited.append(curr_state)
+            successors = problem.getSuccessors(curr_state)
+            for child, direction, cost in successors:
+                fringe.push(child)
+                temp_path = path + [direction]
+                path_to_current.push(temp_path)
+        curr_state = fringe.pop()
+        path = path_to_current.pop()
+    return path
+"""
     #util.raiseNotDefined()
 
 
@@ -153,7 +172,28 @@ def uniformCostSearch(problem):
     Search the node of least total cost first.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    import util  
+
+    queue = util.PriorityQueue()
+    visited = set()
+    final_line = []
+    queue.push(problem.getStartState(), 0)
+    while not queue.isEmpty():
+        state = queue.pop()
+        if state not in visited:
+            visited.add(state)
+            if problem.isGoalState(state):
+                break
+            children = problem.getSuccessors(state)
+            for child, child_direction, cost in children:
+                temp_line = final_line + [child_direction]
+                action_cost = problem.getCostOfActions(temp_line)
+                if child not in visited:
+                    queue.push(child, action_cost)
+                    final_line.append(child_direction)
+    return final_line
+
+    #util.raiseNotDefined()
 
 
 def nullHeuristic(state, problem=None):
