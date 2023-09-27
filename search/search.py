@@ -91,12 +91,6 @@ def depthFirstSearch(problem):
     print("Start's neighbors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's neighbors:", problem.getSuccessors(problem.getStartState()))
-    
-
-
     stack = util.Stack()
     stack.push((problem.getStartState(), []))  # Store the current state and path
 
@@ -106,7 +100,6 @@ def depthFirstSearch(problem):
         if current_state not in visited:
             visited.add(current_state)
             if problem.isGoalState(current_state):
-
                 return path  # Return the path when the goal state is reached
             children = problem.getSuccessors(current_state)
             for child, direction, cost in children:
