@@ -312,6 +312,7 @@ class CornersProblem(search.SearchProblem):
         # in initializing the problem
         "*** YOUR CODE HERE ***"
         self.startState = (self.startingPosition, ())
+        self.costFunction = lambda x : 1
 
     def getStartState(self):
         "Returns the start state (in your state space, not the full Pacman state space)"
@@ -344,7 +345,7 @@ class CornersProblem(search.SearchProblem):
             nextyCoord = int(yCoord + yDir)
             if not self.walls[nextxCoord][nextyCoord]:
                 nextCoord = (nextxCoord, nextyCoord)
-                cost = 1
+                cost = self.costFunction(nextCoord)
                 if nextCoord in self.corners:
                     if nextCoord not in cornersDone:
                         cornersDone = cornersDone + (nextCoord,)
@@ -397,9 +398,27 @@ def cornersHeuristic(state, problem):
     walls = problem.walls  # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0  # Default to trivial solution
-
-
+    corners = problem.corners
+    walls = problem.walls
+    
+    coord, cornersDone = state
+    cornersNotDone = [corner for corner in corners if corner not in cornersDone]
+    distances = []
+    total = 0
+    while cornersNotDone:
+        for corner in cornersNotDone:
+            distances.append(util.manhattanDistance(coord, corner))
+        shortest = min(distances)
+        for i in range(0, len(cornersNotDone)):
+            if shortest == distances[i]:
+                corner = cornersNotDone[i]
+                break
+        total += shortest
+        coord = corner
+        cornersNotDone.remove(corner)
+        distances = []
+    return total
+    
 class AStarCornersAgent(SearchAgent):
     """
     A SearchAgent for FoodSearchProblem using A* and your foodHeuristic
