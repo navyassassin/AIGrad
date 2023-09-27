@@ -88,29 +88,28 @@ def depthFirstSearch(problem):
 
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    print("Start's neighbors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
     print("Start:", problem.getStartState())
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
+    print("Start's neighbors:", problem.getSuccessors(problem.getStartState()))
     
 
-    import util 
 
     stack = util.Stack()
-    stack.push((problem.getStartState(), []))  # Store the current state and final_path
+    stack.push((problem.getStartState(), []))
     visited = set()
     while not stack.isEmpty():
         current_state, final_path = stack.pop()
         if current_state not in visited:
             visited.add(current_state)
             if problem.isGoalState(current_state):
-                return final_path  # Return the final_path when the goal state is reached
+                return final_path  
             children = problem.getSuccessors(current_state)
-            for child, direction, cost in children:
-                new_path = final_path + [direction]  # Extend the final_path
-                stack.push((child, new_path))
+            for coord, direction, cost in children:
+                new_path = final_path + [direction]  
+                stack.push((coord, new_path))
     return []
 
     
@@ -134,16 +133,13 @@ def breadthFirstSearch(problem):
         if current_state not in visited:
             visited.add(current_state)
             neighbors = problem.getSuccessors(current_state)
-            for child, direction, cost in neighbors:
-                queue.push(child)
+            for coord, direction, cost in neighbors:
+                queue.push(coord)
                 temp_path = final_path + [direction]
                 line.push(temp_path)
         current_state = queue.pop()
         final_path = line.pop()
     return final_path
-
-
-
 
     #util.raiseNotDefined()
 
@@ -166,11 +162,11 @@ def uniformCostSearch(problem):
             if problem.isGoalState(state):
                 break
             children = problem.getSuccessors(state)
-            for child, child_direction, cost in children:
+            for coord, child_direction, cost in children:
                 temp_line = final_line + [child_direction]
                 action_cost = problem.getCostOfActions(temp_line)
-                if child not in visited:
-                    queue.push(child, action_cost)
+                if coord not in visited:
+                    queue.push(coord, action_cost)
                     final_line.append(child_direction)
     return final_line
 
@@ -190,7 +186,28 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     Search the node that has the lowest combined cost and heuristic first.
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    
+    queue = util.PriorityQueue()                    
+    queue.push(problem.getStartState(),0)
+    current_state = queue.pop()
+    visited = []                                
+    line=[]                                 
+    path=[]                                    
+    pathToCurrent=util.PriorityQueue()              
+    while problem.isGoalState(current_state) != True:
+        if current_state not in visited:
+            visited.append(current_state)
+            neighbors = problem.getSuccessors(current_state)
+            for coord,direction,cost in neighbors:
+                line = path + [direction]
+                action_cost = problem.getCostOfActions(line) + heuristic(coord,problem)
+                if coord not in visited:
+                    queue.push(coord,action_cost)
+                    pathToCurrent.push(line,action_cost)
+        current_state = queue.pop()
+        path = pathToCurrent.pop()    
+    return path
+    #util.raiseNotDefined()
 
 
 # Abbreviations
