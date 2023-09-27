@@ -167,24 +167,26 @@ def uniformCostSearch(problem):
     "*** YOUR CODE HERE ***"
     import util  
 
-    queue = util.PriorityQueue()
+    states = util.PriorityQueue()
+    paths = util.PriorityQueue()
     visited = set()
-    final_line = []
-    queue.push(problem.getStartState(), 0)
-    while not queue.isEmpty():
-        state = queue.pop()
+    states.push(problem.getStartState(), 0)
+    paths.push([], 0)
+    while not states.isEmpty():
+        state = states.pop()
+        path_to_state = paths.pop()
+        if problem.isGoalState(state):
+            break
         if state not in visited:
             visited.add(state)
-            if problem.isGoalState(state):
-                break
             children = problem.getSuccessors(state)
-            for coord, child_direction, cost in children:
-                temp_line = final_line + [child_direction]
+            for child, child_direction, cost in children:
+                temp_line = path_to_state + [child_direction]
                 action_cost = problem.getCostOfActions(temp_line)
-                if coord not in visited:
-                    queue.push(coord, action_cost)
-                    final_line.append(child_direction)
-    return final_line
+                if child not in visited:
+                    states.push(child, action_cost)
+                    paths.push(temp_line, action_cost)
+    return path_to_state
 
     #util.raiseNotDefined()
 
